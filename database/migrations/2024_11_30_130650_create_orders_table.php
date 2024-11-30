@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('phone')->unique();
+            $table->foreignId('reservation_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('waiter_id')->constrained('users')->cascadeOnDelete();
+            $table->unsignedInteger('paid');
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('orders');
     }
 };
