@@ -19,7 +19,7 @@ class MealFactory extends Factory
         return [
             'name' => $this->faker->word(),
             'description' => $this->faker->sentence(),
-            'price' => $this->faker->numberBetween(10, 200) * 100,
+            'price' => $this->faker->numberBetween(10, 200),
             'quantity' => $this->faker->numberBetween(1, 100),
             'discount_percentage' => $this->faker->numberBetween(0, 50),
         ];
