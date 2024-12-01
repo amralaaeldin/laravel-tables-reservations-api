@@ -1,0 +1,60 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Meal;
+use App\Models\Order;
+use App\Models\Reservation;
+use Illuminate\Http\Request;
+
+class OrderController extends Controller
+{
+    public function index()
+    {
+        //
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'reservation_id' => 'required|exists:reservations,id',
+            'waiter_id' => 'required|exists:users,id',
+            'paid' => 'required|numeric|min:0',
+            'meal_id' => 'required|exists:meals,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $reservation = Reservation::find($request->reservation_id);
+        $order = $reservation->order;
+        if (!$order) {
+            $order = Order::create([
+                'reservation_id' => $reservation->id,
+                'waiter_id' => $request->waiter_id,
+                'paid' => $request->paid,
+            ]);
+        }
+
+        $order->details()->create([
+            'meal_id' => $request->meal_id,
+            'quantity' => $request->quantity,
+            'amount_to_pay' => $request->quantity * Meal::find($request->meal_id)->priceAfterDiscount(),
+        ]);
+
+        return response()->json($order, 201);
+    }
+
+    public function show(Order $order)
+    {
+        //
+    }
+
+    public function update(Request $request, Order $order)
+    {
+        //
+    }
+
+    public function destroy(Order $order)
+    {
+        //
+    }
+}
