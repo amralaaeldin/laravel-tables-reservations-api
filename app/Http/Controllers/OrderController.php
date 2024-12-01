@@ -11,7 +11,7 @@ class OrderController extends Controller
 {
     public function index()
     {
-        //
+        return response()->json(Order::paginate(15));
     }
 
     public function store(Request $request)
@@ -45,16 +45,25 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        //
+        return response()->json($order->with('details')->find($order->id));
     }
 
     public function update(Request $request, Order $order)
     {
-        //
+        $request->validate([
+            'waiter_id' => 'exists:users,id',
+            'paid' => 'numeric|min:0',
+        ]);
+
+        $order->update($request->all());
+
+        return response()->json($order);
     }
 
     public function destroy(Order $order)
     {
-        //
+        $order->delete();
+
+        return response()->json(null, 204);
     }
 }

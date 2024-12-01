@@ -11,7 +11,15 @@ class ReservationController extends Controller
 {
     public function index()
     {
-        //
+        if (request()->has('table_id')) {
+            return Reservation::where('table_id', request('table_id'))->get();
+        }
+
+        if (request()->has('customer_id')) {
+            return Reservation::where('customer_id', request('customer_id'))->get();
+        }
+
+        return Reservation::paginate(15);
     }
 
     public function store(Request $request)
@@ -47,17 +55,42 @@ class ReservationController extends Controller
 
     public function show(Reservation $reservation)
     {
-        //
+        return response()->json($reservation->with('order', 'order.details', 'table', 'customer')->find($reservation->id));
     }
 
     public function update(Request $request, Reservation $reservation)
     {
-        //
+        $request->validate([
+            'table_id' => 'exists:tables,id',
+            'customer_id' => 'exists:users,id',
+            'from' => 'date_format:Y-m-d H:i',
+            'to' => 'date_format:Y-m-d H:i|after:from',
+        ]);
+
+        $table = Table::find($request->table_id);
+        if (!$table->isAvailable($request->from, $request->to)) {
+            WaitingList::create([
+                'table_id' => $request->table_id,
+                'customer_id' => $request->customer_id,
+                'from' => $request->from,
+                'to' => $request->to,
+            ]);
+
+            $reservation->delete();
+
+            return response()->json(['message' => 'Table not available, Added to waiting list'], 400);
+        }
+
+        $reservation->update($request->all());
+
+        return response()->json($reservation);
     }
 
     public function destroy(Reservation $reservation)
     {
-        //
+        $reservation->delete();
+
+        return response()->json(null, 204);
     }
 
     public function checkout(Reservation $reservation)

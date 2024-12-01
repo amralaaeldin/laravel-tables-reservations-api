@@ -11,7 +11,7 @@ class TableController extends Controller
 {
     public function index()
     {
-        //
+        return Table::paginate(15);
     }
 
     public function indexAvailable(Request $request)
@@ -29,22 +29,34 @@ class TableController extends Controller
 
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'capacity' => 'required|integer|min:1',
+        ]);
+
+        return Table::create($request->all());
     }
 
     public function show(Table $table)
     {
-        //
+        return $table->with('reservations')->find($table->id);
     }
 
     public function update(Request $request, Table $table)
     {
-        //
+        $request->validate([
+            'capacity' => 'integer|min:1',
+        ]);
+
+        $table->update($request->all());
+
+        return $table;
     }
 
     public function destroy(Table $table)
     {
-        //
+        $table->delete();
+
+        return response()->json(['message' => 'Table deleted']);
     }
 
     public function checkAvailability(Request $request)

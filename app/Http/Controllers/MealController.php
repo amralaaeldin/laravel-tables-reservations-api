@@ -22,21 +22,41 @@ class MealController extends Controller
 
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'discount' => 'required|numeric|min:0|max:100',
+            'quantity' => 'required|integer|min:0',
+        ]);
+
+        $meal = Meal::create($request->all());
+
+        return response()->json($meal, 201);
     }
 
     public function show(Meal $meal)
     {
-        //
+        return response()->json($meal);
     }
 
     public function update(Request $request, Meal $meal)
     {
-        //
+        $request->validate([
+            'name' => 'string',
+            'price' => 'numeric|min:0',
+            'discount' => 'numeric|min:0|max:100',
+            'quantity' => 'integer|min:0',
+        ]);
+
+        $meal->update($request->all());
+
+        return response()->json($meal);
     }
 
     public function destroy(Meal $meal)
     {
-        //
+        $meal->delete();
+
+        return response()->json(null, 204);
     }
 }
