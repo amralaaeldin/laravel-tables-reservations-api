@@ -6,6 +6,7 @@ use App\Models\Meal;
 use App\Models\Order;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
@@ -16,15 +17,20 @@ class OrderController extends Controller
 
     public function store(Request $request)
     {
+        $reservation = Reservation::find($request->reservation_id);
+
+        if (!$reservation) {
+            return response()->json(['error' => 'Reservation not found'], 404);
+        }
+
         $request->validate([
             'reservation_id' => 'required|exists:reservations,id',
             'waiter_id' => 'required|exists:users,id',
             'paid' => 'required|numeric|min:0',
             'meal_id' => 'required|exists:meals,id',
-            'quantity' => 'required|integer|min:1',
+            'quantity' => ['required', 'integer', 'min:1', Rule::max(Meal::find($request->meal_id)->quantityAvailable($reservation->from))],
         ]);
 
-        $reservation = Reservation::find($request->reservation_id);
         $order = $reservation->order;
         if (!$order) {
             $order = Order::create([

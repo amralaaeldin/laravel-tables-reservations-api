@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Meal;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class OrderDetailController extends Controller
 {
@@ -12,7 +14,7 @@ class OrderDetailController extends Controller
     {
         $request->validate([
             'meal_id' => 'required|exists:meals,id',
-            'quantity' => 'required|integer|min:1',
+            'quantity' => ['required', 'integer', 'min:1', Rule::max(Meal::find($request->meal_id)->quantityAvailable($order->reservation->from))],
         ]);
 
         $order->details()->create([
@@ -27,7 +29,7 @@ class OrderDetailController extends Controller
     public function update(Request $request, OrderDetail $orderDetail)
     {
         $request->validate([
-            'quantity' => 'integer|min:1',
+            'quantity' => ['integer', 'min:1', Rule::max(Meal::find($orderDetail->meal_id)->quantityAvailable($orderDetail->order->reservation->from))],
         ]);
 
         $orderDetail->update([
