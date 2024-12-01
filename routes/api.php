@@ -19,12 +19,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::apiResource('tables', TableController::class);
 Route::get('tables/check-availability', [TableController::class, 'checkAvailability']);
 Route::get('tables/available', [TableController::class, 'indexAvailable']);
+Route::apiResource('tables', TableController::class);
 
-Route::apiResource('reservations', ReservationController::class);
 Route::get('reservations/{reservation}/checkout', [ReservationController::class, 'checkout']);
+Route::apiResource('reservations', ReservationController::class);
 
 Route::apiResource('waiting-list', WaitingListController::class)
   ->only(['index', 'show']);

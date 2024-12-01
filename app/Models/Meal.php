@@ -42,7 +42,7 @@ class Meal extends Model
 
     public function discountAmount()
     {
-        return $this->price * $this->discount_percentage;
+        return $this->price * $this->discount_percentage / 100;
     }
 
     public function priceAfterDiscount()

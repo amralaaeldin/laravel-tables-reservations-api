@@ -2,6 +2,10 @@
 
 This is a Laravel-based api that allows you to CRUD tables reservations & orders.
 
+## Postman Collection
+
+`https://www.postman.com/blue-zodiac-565749/workspace/table-reservations-api`
+
 ## Features
 
 -   **Check Availability**: check if a table is available during certain date, for the number of guests.

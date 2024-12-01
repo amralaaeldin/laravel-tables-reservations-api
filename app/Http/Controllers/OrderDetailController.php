@@ -6,35 +6,46 @@ use App\Models\Meal;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class OrderDetailController extends Controller
 {
     public function store(Request $request, Order $order)
     {
+        $meal = Meal::find($request->meal_id);
+
+        if (!$meal) {
+            return response()->json(['error' => 'Meal not found'], 404);
+        }
+
         $request->validate([
             'meal_id' => 'required|exists:meals,id',
-            'quantity' => ['required', 'integer', 'min:1', Rule::max(Meal::find($request->meal_id)->quantityAvailable($order->reservation->from))],
+            'quantity' => ['required', 'integer', 'min:1', 'max:' . $meal->quantityAvailable($order->reservation->from)],
         ]);
 
-        $order->details()->create([
+        $orderDetail = $order->details()->create([
             'meal_id' => $request->meal_id,
             'quantity' => $request->quantity,
-            'amount_to_pay' => $request->quantity * $order->meal->priceAfterDiscount(),
+            'amount_to_pay' => $request->quantity * $meal->priceAfterDiscount(),
         ]);
 
-        return response()->json($order, 201);
+        return response()->json($orderDetail, 201);
     }
 
     public function update(Request $request, OrderDetail $orderDetail)
     {
+        $meal = Meal::find($orderDetail->meal_id);
+
+        if (!$meal) {
+            return response()->json(['error' => 'Meal not found'], 404);
+        }
+
         $request->validate([
-            'quantity' => ['integer', 'min:1', Rule::max(Meal::find($orderDetail->meal_id)->quantityAvailable($orderDetail->order->reservation->from))],
+            'quantity' => ['integer', 'min:1', "max:" . $meal->quantityAvailable($orderDetail->order->reservation->from)],
         ]);
 
         $orderDetail->update([
             'quantity' => $request->quantity,
-            'amount_to_pay' => $request->quantity * $orderDetail->order->meal->priceAfterDiscount(),
+            'amount_to_pay' => $request->quantity * $meal->priceAfterDiscount(),
         ]);
 
         return response()->json($orderDetail);
