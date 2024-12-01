@@ -1,66 +1,115 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel Tables Reservations API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This is a Laravel-based api that allows you to CRUD tables reservations & orders.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+-   **Check Availability**: check if a table is available during certain date, for the number of guests.
+-   **Reserve Table**: reserve table for customer in the date time he requested.
+-   **List All Items in Menu**: list all items in menu (assumed that restaurant can only serve every meal limited times per day).
+-   **Order**: place an order for a table applying all discounts for each meal.
+-   **Checkout and Print Invoice**: checkout and print invoice for a table reservation.
+-   **Waiting List**: put customers on waiting list if maximum capacity of tables reached.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requirements
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+-   PHP 8.0 or higher
+-   Composer
+-   MySQL (or any other database)
+-   Docker (optional)
 
-## Learning Laravel
+## Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Without Docker
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+#### Step 1: Clone the Repository & Install Dependencies
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Clone the repository to your local machine:
 
-## Laravel Sponsors
+```bash
+git clone https://github.com/amralaaeldin/laravel-tables-reservations-api
+cd laravel-tables-reservations-api
+composer install
+cp .env.example .env
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+#### Step 2: Define Environment Variables
 
-### Premium Partners
+Open the .env file and configure your environment variables.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+#### Step 3: Generate an Application Key & Set Up the App
 
-## Contributing
+Run the following command to generate an application key:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+php artisan key:generate
+php artisan migrate
+php artisan db:seed //optional
+```
 
-## Code of Conduct
+#### Step 4: Start the Development Server
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+You can start the development server using the following command:
 
-## Security Vulnerabilities
+```bash
+php artisan serve
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### With Docker
 
-## License
+#### Step 1: Clone the Repository
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Clone the repository to your local machine:
+
+```bash
+git clone https://github.com/amralaaeldin/laravel-tables-reservations-api
+cd laravel-tables-reservations-api
+```
+
+#### Step 2: Build the Docker Image using Docker Compose
+
+Build the Docker image using the following command:
+
+```bash
+docker-compose build
+```
+
+#### Step 3: Start the Docker Containers
+
+Start the Docker containers using the following command:
+
+```bash
+docker-compose up -d
+```
+
+#### Step 4: Install Composer Dependencies
+
+Install the Composer dependencies inside the PHP container:
+
+```bash
+docker-compose exec app composer install
+```
+
+#### Step 5: Generate an Application Key & Set Up the App
+
+Generate an application key using the
+following command:
+
+```bash
+docker-compose exec app php artisan key:generate
+docker-compose exec app php artisan migrate
+docker-compose exec app php artisan db:seed //optional
+```
+
+#### Step 6: Start the Development Server
+
+You can access the application at `http://localhost:8000`.
+
+## Troubleshooting
+
+If you run into issues:
+
+-   Ensure Docker is running if you're using Docker.
+-   Check the Laravel logs (storage/logs/laravel.log) for detailed error messages.
+-   Make sure you have the correct file permissions if you're running on a local system.
+-   Check your .env file for any configuration mistakes (like the wrong database credentials).
