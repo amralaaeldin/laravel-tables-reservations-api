@@ -20,7 +20,7 @@ class OrderFactory extends Factory
         return [
             'reservation_id' => $this->faker->numberBetween(1, 50),
             'waiter_id' => 1,
-            'paid' => 100 * 100,
+            'paid' => 100,
         ];
     }
 }
